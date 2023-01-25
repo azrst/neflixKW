@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,21 +8,66 @@ import {
   Dimensions,
   ScrollView,
   TouchableOpacity,
+  Animated,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+// import interpolate from 'interpolate-range';
 import TextSubTitle from '../../../../component/Text/TextSubTitle';
 import TextTitle from '../../../../component/Text/TextTitle';
+import {useUIContext} from '../../../../manager/context/AppContext';
+import {interpolate} from '../../../../utils/ultility';
 
 export default function BannerTop() {
-  const imgSource =
+  const imgSource1 =
     'https://occ-0-6707-58.1.nflxso.net/dnm/api/v6/WNk1mr9x_Cd_2itp6pUM7-lXMJg/AAAABef6S1GOeh1cXCMvm0yLSVwwe5cQtblOF8CLdV4mVmkdHIBmulmTudZmCLNE2_EC_Z4SC5Q8BJDP_zV3FnaEMzncbHnLk8LFZ8EtWuHQnJtTy5viTT0XAe_xbZ_RX-mdrRt-Jw.jpg';
+  const imgSource2 =
+    'https://occ-0-6707-58.1.nflxso.net/dnm/api/v6/E8vDc_W8CLv7-yMQu8KMEC7Rrr8/AAAABQ0ySQUUlAsjPWoRU071UevVq42-XBb6USrRxFyrcot-m8V1XptB-dfJmV1l612FGsQtdTE_lJBf5vmWN6tP4rKwkf1GX3ycjWkN.jpg';
+
+  const [imgSource, setImgSource] = useState(imgSource1);
+
+  const {yCoordinate} = useUIContext();
+
+  useEffect(() => {
+    // setTimeout(() => {
+    //   setImgSource(imgSource2);
+    // }, 3000);
+
+    const a = interpolate({
+      inputRange: [yCoordinate, 370],
+      outputRange: [0, 0.8],
+    });
+    console.log(a);
+  }, [yCoordinate]);
 
   return (
     <View>
       <View style={{}}>
         {/* <ScrollView horizontal> */}
-        <Image source={{uri: imgSource}} style={style.imageContainer} />
+        <Animated.Image
+          source={{uri: imgSource}}
+          style={style.imageContainer}
+          //   style={[
+          //     style.imageContainer,
+          //     {
+          //       transform: [
+          //         {
+          //           translateY: yCoordinate.interpolate(yCoordinate, {
+          //             inputRange: [-1000, 0],
+          //             outputRange: [-100, 0],
+          //             extrapolate: 'clamp',
+          //           }),
+          //         },
+          //         {
+          //           scale: yCoordinate.interpolate({
+          //             inputRange: [0, 100],
+          //             outputRange: [1, 1.3],
+          //           }),
+          //         },
+          //       ],
+          //     },
+          //   ]}
+        />
         {/* </ScrollView> */}
       </View>
 

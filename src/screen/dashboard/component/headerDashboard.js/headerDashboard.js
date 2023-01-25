@@ -12,7 +12,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {BlurView} from '@react-native-community/blur';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
-import {STATUSBAR_HEIGHT} from '../../../../utils/ultility';
+import {interpolate, STATUSBAR_HEIGHT} from '../../../../utils/ultility';
 import {darkGradient} from '../../../../utils/colors';
 import TextTitle from '../../../../component/Text/TextTitle';
 import Fragment from '../../../../component/Fragment/Fragment';
@@ -31,7 +31,17 @@ export default function headerDashboard() {
   const {yCoordinate, setYCoordinate} = useUIContext();
 
   return (
-    <View style={[style.container]}>
+    <View
+      style={[
+        style.container,
+        {
+          opacity: interpolate({
+            inputRange: [yCoordinate, 370],
+            outputRange: [0, 0.8],
+            yCoordinate,
+          }),
+        },
+      ]}>
       <Fragment>
         <View style={style.flexContainer}>
           <View style={{flex: 6 / 10}}>
@@ -76,8 +86,7 @@ const style = StyleSheet.create({
     paddingTop: STATUSBAR_HEIGHT,
     position: 'absolute',
     width: '100%',
-    backgroundColor: 'gray',
-    opacity: 0.5,
+    backgroundColor: '#2e2e2e',
   },
   filterContainer: {
     flexDirection: 'row',
