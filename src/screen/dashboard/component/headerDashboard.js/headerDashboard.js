@@ -36,8 +36,8 @@ export default function headerDashboard() {
         style.container,
         {
           opacity: interpolate({
-            inputRange: [yCoordinate, 370],
-            outputRange: [0, 0.8],
+            inputRange: [yCoordinate, 700],
+            outputRange: [0, 0.95],
             yCoordinate,
           }),
         },

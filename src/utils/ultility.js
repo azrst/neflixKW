@@ -16,13 +16,21 @@ export const interpolate = ({
   const maxY = outputRange[1];
 
   const slope = (maxY - minY) / (maxX - minX);
-  console.log('slope : ', slope);
+  //   console.log('slope : ', slope);
   const res = (x + minX) * (slope + minY);
-  console.log('res : ', maxY);
-  console.log('res : ', res);
+  //   console.log('res : ', maxY);
+  //   console.log('res : ', res);
 
   const result = maxY - res;
-  console.log('result : ', res);
+  //   console.log('result : ', res);
+  if (result <= maxY) {
+    return result;
+  } else {
+    return 0;
+  }
+};
 
-  return result;
+export const queryParams = async (data = {}) => {
+  const params = '?' + new URLSearchParams(data).toString();
+  return params;
 };

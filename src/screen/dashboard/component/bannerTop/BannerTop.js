@@ -12,9 +12,9 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-// import interpolate from 'interpolate-range';
 import TextSubTitle from '../../../../component/Text/TextSubTitle';
 import TextTitle from '../../../../component/Text/TextTitle';
+import apiManager from '../../../../manager/api/apiManager';
 import {useUIContext} from '../../../../manager/context/AppContext';
 import {interpolate} from '../../../../utils/ultility';
 
@@ -29,17 +29,8 @@ export default function BannerTop() {
   const {yCoordinate} = useUIContext();
 
   useEffect(() => {
-    // setTimeout(() => {
-    //   setImgSource(imgSource2);
-    // }, 3000);
-
-    const a = interpolate({
-      inputRange: [yCoordinate, 370],
-      outputRange: [0, 0.8],
-    });
-    console.log(a);
-  }, [yCoordinate]);
-
+    apiManager();
+  }, []);
   return (
     <View>
       <View style={{}}>
@@ -79,7 +70,7 @@ export default function BannerTop() {
           },
         ]}>
         <LinearGradient
-          colors={['transparent', 'black']}
+          colors={['transparent', 'transparent', 'transparent', 'black']}
           style={[style.imageContainer, style.linearContainer]}>
           <View style={style.playerContainer}>
             <View style={style.itemContainer}>
@@ -88,9 +79,7 @@ export default function BannerTop() {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
-                onPress={() => {
-                  console.log('hehe');
-                }}>
+                onPress={() => {}}>
                 <Icon name="plus-thick" size={20} color="white" />
                 <TextSubTitle title="Watch" fontSize={12} />
               </TouchableOpacity>
@@ -106,9 +95,7 @@ export default function BannerTop() {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
-                onPress={() => {
-                  console.log('hehe');
-                }}>
+                onPress={() => {}}>
                 <Icon name="information-outline" size={20} color="white" />
                 <TextSubTitle title="Info" fontSize={12} />
               </TouchableOpacity>

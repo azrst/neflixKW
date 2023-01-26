@@ -7,6 +7,9 @@
 
 import React from 'react';
 import {View, StatusBar} from 'react-native';
+import {Provider} from 'react-redux';
+
+import store from './src/redux/store';
 import Root from './src/navigation/root';
 import {UIProvider} from './src/manager/context/AppContext';
 
@@ -15,7 +18,9 @@ const App = () => {
     <View style={{flex: 1}}>
       <StatusBar backgroundColor="transparent" translucent={true} />
       <UIProvider>
-        <Root />
+        <Provider store={store}>
+          <Root />
+        </Provider>
       </UIProvider>
     </View>
   );

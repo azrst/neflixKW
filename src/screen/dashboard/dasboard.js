@@ -1,8 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/rules-of-hooks */
-import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  REQ_RECOMEND_MOVIE,
+  SET_RECOMEND_MOVIE,
+  FAIL_RECOMENDED_MOVIE,
+} from '../../redux/reducer/recomendMovie';
+
 import {useUIContext} from '../../manager/context/AppContext';
 import {
   darkGradient,
@@ -11,19 +19,54 @@ import {
 } from '../../utils/colors';
 import {interpolate, STATUSBAR_HEIGHT} from '../../utils/ultility';
 import BannerTop from './component/bannerTop/BannerTop';
+import FlatListMovie from '../../component/FlatlistMovie/flatlistMovie';
 
 import HeaderDashboard from './component/headerDashboard.js/headerDashboard';
+import TextSubTitle from '../../component/Text/TextSubTitle';
+import {incrementByAmount} from '../../redux/reducer/sampleReducer';
+import {fetchRecomendMovie} from '../../service/fetchRecomendMovie';
+import apiManager from '../../manager/api/apiManager';
+import {endpoint} from '../../utils/endpoint';
 
 export default function dasboard() {
+  const dispatch = useDispatch();
+  //   const recomendedMovieData = useSelector(
+  //     state => state?.fetchRecomendMovie?.data,
+  //   );
+  const counterReducer = useSelector(state => state?.counter?.value);
+  const recomendedMovieData = useSelector(state => state?.recomendMovie);
   const content = ['', '', '', '', '', '', '', ''];
   const {yCoordinate, setYCoordinate} = useUIContext();
+
+  const getRecomendMovie = async () => {
+    dispatch(REQ_RECOMEND_MOVIE());
+    let body = {
+      page: 1,
+      language: 'en-US',
+    };
+    try {
+      const res = await apiManager(endpoint.recomended, body, 'GET');
+      if (res.status === 200) {
+        dispatch(SET_RECOMEND_MOVIE(res.data.results));
+      } else {
+        dispatch(FAIL_RECOMENDED_MOVIE('failed to load'));
+      }
+    } catch (err) {
+      dispatch(FAIL_RECOMENDED_MOVIE('failed to load'));
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      getRecomendMovie();
+    }, 3000);
+  }, []);
 
   return (
     <View>
       <ScrollView
         onScroll={async event => {
           const y = event.nativeEvent.contentOffset.y;
-          //   console.log('coor : ', y);
           setYCoordinate(y);
         }}
         scrollEventThrottle={16}
@@ -32,13 +75,7 @@ export default function dasboard() {
         bounces={false}>
         <View style={style.container}>
           <BannerTop />
-          {content.map((item, index) => {
-            return (
-              <View style={{paddingBottom: 30}}>
-                <Text>{index}. dashboardPage</Text>
-              </View>
-            );
-          })}
+          <FlatListMovie movie={recomendedMovieData} />
         </View>
       </ScrollView>
       <HeaderDashboard />
@@ -48,7 +85,7 @@ export default function dasboard() {
 
 const style = StyleSheet.create({
   container: {
-    paddingBottom: 50,
+    paddingBottom: Dimensions.get('window').height * 0.2,
     // paddingTop: STATUSBAR_HEIGHT,
     backgroundColor: 'black',
   },
