@@ -6,12 +6,13 @@ export default function TextSubTitle({
   colors = 'white',
   numberOfLines = undefined,
   fontSize = 18,
+  style = {},
 }) {
   return (
     <View>
       <Text
         numberOfLines={numberOfLines}
-        style={[style.text, {fontSize: fontSize}]}>
+        style={[style.text, {fontSize: fontSize, color: colors}, style]}>
         {title}
       </Text>
     </View>

@@ -7,6 +7,7 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
@@ -18,13 +19,14 @@ export const FlatlistMovie = ({
   title = 'Recomendation for You',
   movie = null,
   onClick = () => {},
+  selectedMovie = () => {},
 }) => {
   //   data = [{title: '1'}, {title: '2'}, {title: '3'}];
 
   const dumyTitleRender = () => {
     return (
       <View>
-        <SkeletonPlaceholder speed={2000} backgroundColor="gray">
+        <SkeletonPlaceholder speed={2000}>
           <View style={style.titleDummy} />
         </SkeletonPlaceholder>
       </View>
@@ -38,9 +40,11 @@ export const FlatlistMovie = ({
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {mapping.map((item, index) => {
             return (
-              <SkeletonPlaceholder speed={2000} backgroundColor="gray">
-                <View style={style.cardDummy} />
-              </SkeletonPlaceholder>
+              <View style={{paddingHorizontal: 10, paddingVertical: 20}}>
+                <SkeletonPlaceholder speed={2000} backgroundColor="gray">
+                  <View style={style.cardDummy} />
+                </SkeletonPlaceholder>
+              </View>
             );
           })}
         </ScrollView>
@@ -59,27 +63,34 @@ export const FlatlistMovie = ({
           </View>
         )}
       </Fragment>
-      {/* <TextSubTitle title={JSON.stringify(movie)} /> */}
       <View>
-        {movie.loading ? (
+        {movie?.loading ? (
           <View>{dumyCardRender()}</View>
         ) : (
-          <View>
+          <View style={{}}>
             <FlatList
-              maxToRenderPerBatch={4}
-              initialNumToRender={4}
-              data={movie?.data?.filter((item, index) => index <= 4)}
+              data={movie?.data}
               horizontal
+              showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => `flatlistMovie_${index}`}
               renderItem={({item, index}) => (
-                <TouchableOpacity>
-                  <View>
-                    <Image
-                      style={style.cardDummy}
-                      source={{uri: `${imageLink}${item?.poster_path}`}}
-                    />
-                  </View>
-                </TouchableOpacity>
+                <View style={{paddingHorizontal: 10, paddingVertical: 20}}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      selectedMovie(item);
+                    }}>
+                    <View
+                      style={[
+                        style.cardDummy,
+                        Platform.OS === 'ios' ? style.cardDummyShadow : {},
+                      ]}>
+                      <Image
+                        style={style.cardDummy}
+                        source={{uri: `${imageLink}${item?.poster_path}`}}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </View>
               )}
             />
           </View>
@@ -91,7 +102,7 @@ export const FlatlistMovie = ({
 
 const style = StyleSheet.create({
   container: {
-    paddingTop: 30,
+    paddingTop: 20,
   },
   titleDummy: {
     width: Dimensions.get('window').width * 0.4,
@@ -103,9 +114,19 @@ const style = StyleSheet.create({
     width: Dimensions.get('window').width * 0.3,
     height: Dimensions.get('window').height * 0.2,
     borderRadius: 20,
-    marginHorizontal: 10,
+    // marginHorizontal: 10,
     resizeMode: 'cover',
-    marginTop: 20,
+
+    elevation: 5,
+  },
+  cardDummyShadow: {
+    shadowColor: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 5.22,
   },
 });
 

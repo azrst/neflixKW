@@ -9,6 +9,8 @@ export const apiManager = async (endPoint = {}, body = {}, method = 'GET') => {
   try {
     body = {
       api_key: apiKey,
+      language: 'en-US',
+
       ...body,
     };
     const bodyparams = await queryParams(body);

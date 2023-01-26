@@ -27,8 +27,9 @@ import {incrementByAmount} from '../../redux/reducer/sampleReducer';
 import {fetchRecomendMovie} from '../../service/fetchRecomendMovie';
 import apiManager from '../../manager/api/apiManager';
 import {endpoint} from '../../utils/endpoint';
+import ModalDetailMovie from '../../component/Modal/modalDetailMovie';
 
-export default function dasboard() {
+export default function Dasboard() {
   const dispatch = useDispatch();
   //   const recomendedMovieData = useSelector(
   //     state => state?.fetchRecomendMovie?.data,
@@ -37,12 +38,18 @@ export default function dasboard() {
   const recomendedMovieData = useSelector(state => state?.recomendMovie);
   const content = ['', '', '', '', '', '', '', ''];
   const {yCoordinate, setYCoordinate} = useUIContext();
+  const [modalDetailMovie, setModalDetailMovie] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+
+  const [enjoySunday, setEnjoySunday] = useState({loading: true, data: null});
+  const [specialForYou, setSpecialForYou] = useState(null);
 
   const getRecomendMovie = async () => {
     dispatch(REQ_RECOMEND_MOVIE());
+    const rand = Math.floor(Math.random() * 101);
     let body = {
-      page: 1,
-      language: 'en-US',
+      page: rand,
+      include_video: true,
     };
     try {
       const res = await apiManager(endpoint.recomended, body, 'GET');
@@ -55,12 +62,52 @@ export default function dasboard() {
       dispatch(FAIL_RECOMENDED_MOVIE('failed to load'));
     }
   };
+  const getRecomendMovie2 = async type => {
+    const rand = Math.floor(Math.random() * 101);
+    let body = {
+      page: rand,
+      include_video: true,
+    };
+    try {
+      const res = await apiManager(endpoint.recomended, body, 'GET');
+      if (res.status === 200) {
+        console.log('enjoy sunday res : ', res.status);
+        controlGetRecomentMovie(type, res?.data?.results);
+      } else {
+      }
+    } catch (err) {}
+  };
+  const controlGetRecomentMovie = (type, res) => {
+    const result = {
+      loading: false,
+      data: res,
+    };
+    switch (type) {
+      case 'enjoySunday':
+        console.log('set enjoy sunday');
+        setEnjoySunday(result);
+        break;
+      case 'specialForYou':
+        setSpecialForYou(result);
+        break;
+      default:
+        break;
+    }
+  };
 
   useEffect(() => {
     setTimeout(() => {
       getRecomendMovie();
+      getRecomendMovie2('enjoySunday');
+      getRecomendMovie2('specialForYou');
     }, 3000);
   }, []);
+
+  const controlSelectedMovie = item => {
+    console.log(item);
+    setSelectedMovie(item);
+    setModalDetailMovie(true);
+  };
 
   return (
     <View>
@@ -74,8 +121,34 @@ export default function dasboard() {
         showsVerticalScrollIndicator={false}
         bounces={false}>
         <View style={style.container}>
+          <ModalDetailMovie
+            open={modalDetailMovie}
+            close={() => {
+              setModalDetailMovie(false);
+            }}
+            movie={selectedMovie}
+          />
           <BannerTop />
-          <FlatListMovie movie={recomendedMovieData} />
+          <FlatListMovie
+            selectedMovie={item => {
+              controlSelectedMovie(item);
+            }}
+            movie={recomendedMovieData}
+          />
+          <FlatListMovie
+            selectedMovie={item => {
+              controlSelectedMovie(item);
+            }}
+            movie={enjoySunday}
+            title={'Enjoy Sunday'}
+          />
+          <FlatListMovie
+            selectedMovie={item => {
+              controlSelectedMovie(item);
+            }}
+            movie={specialForYou}
+            title={'Special for You'}
+          />
         </View>
       </ScrollView>
       <HeaderDashboard />
