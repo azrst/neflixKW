@@ -26,7 +26,7 @@ export const FlatlistMovie = ({
   const dumyTitleRender = () => {
     return (
       <View>
-        <SkeletonPlaceholder speed={2000}>
+        <SkeletonPlaceholder speed={2000} backgroundColor={'gray'}>
           <View style={style.titleDummy} />
         </SkeletonPlaceholder>
       </View>
@@ -41,7 +41,7 @@ export const FlatlistMovie = ({
           {mapping.map((item, index) => {
             return (
               <View style={{paddingHorizontal: 10, paddingVertical: 20}}>
-                <SkeletonPlaceholder speed={2000} backgroundColor="gray">
+                <SkeletonPlaceholder speed={2000} backgroundColor="smokegray">
                   <View style={style.cardDummy} />
                 </SkeletonPlaceholder>
               </View>

@@ -10,6 +10,7 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  Platform,
 } from 'react-native';
 import {BlurView} from '@react-native-community/blur';
 import dayjs from 'dayjs';
@@ -22,6 +23,8 @@ import TextTitle from '../Text/TextTitle';
 import apiManager from '../../manager/api/apiManager';
 import {endpoint} from '../../utils/endpoint';
 import FlatlistMovie from '../FlatlistMovie/flatlistMovie';
+import {STATUSBAR_HEIGHT} from '../../utils/ultility';
+import ShareContent from './component/shareContent';
 
 const ModalDetailMovie = ({
   open = false,
@@ -151,9 +154,26 @@ const ModalDetailMovie = ({
               style={style.imageContainer}
               source={{uri: `${imageLink}${movie?.backdrop_path}`}}
             />
+            <View
+              style={{
+                position: 'absolute',
+                paddingTop: Platform.OS === 'ios' ? STATUSBAR_HEIGHT + 10 : 20,
+                width: '100%',
+                alignItems: 'flex-end',
+              }}>
+              <Fragment>
+                <TouchableOpacity
+                  style={{opacity: 0.8}}
+                  onPress={() => {
+                    close();
+                  }}>
+                  <Icon name={'close-circle'} color={'white'} size={35} />
+                </TouchableOpacity>
+              </Fragment>
+            </View>
           </View>
         </View>
-        <View>
+        <View style={{paddingBottom: 50}}>
           <BlurView
             style={style.absolute}
             blurType="dark"
@@ -184,7 +204,7 @@ const ModalDetailMovie = ({
                       : 'red',
                   paddingRight: 10,
                 }}
-                title={movie?.vote_average}
+                title={movie?.vote_average.toFixed(1)}
               />
               <TextSubTitle
                 fontSize={18}
@@ -256,6 +276,9 @@ const ModalDetailMovie = ({
                 title={movie?.overview.replace(/"/g, '')}
               />
             </View>
+            <View style={style.containerDesc}>
+              <ShareContent />
+            </View>
             {/* <TouchableOpacity
               onPress={() => {
                 this.scroll.scrollTo({x: 0, y: 0, animated: true});
@@ -268,7 +291,7 @@ const ModalDetailMovie = ({
             </TouchableOpacity> */}
           </Fragment>
           {movieSimilar?.loading !== null && (
-            <View style={{paddingBottom: 50}}>
+            <View>
               <FlatlistMovie
                 movie={movieSimilar}
                 title={'Recommendation'}
