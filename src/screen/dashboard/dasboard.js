@@ -37,7 +37,8 @@ export default function Dasboard() {
   const counterReducer = useSelector(state => state?.counter?.value);
   const recomendedMovieData = useSelector(state => state?.recomendMovie);
   const content = ['', '', '', '', '', '', '', ''];
-  const {yCoordinate, setYCoordinate} = useUIContext();
+  const {yCoordinate, setYCoordinate, translucent, setTranslucent} =
+    useUIContext();
   const [modalDetailMovie, setModalDetailMovie] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
 
@@ -106,6 +107,7 @@ export default function Dasboard() {
   const controlSelectedMovie = item => {
     console.log(item);
     setSelectedMovie(item);
+    setTranslucent(!translucent);
     setModalDetailMovie(true);
   };
 
@@ -124,9 +126,13 @@ export default function Dasboard() {
           <ModalDetailMovie
             open={modalDetailMovie}
             close={() => {
+              setTranslucent(!translucent);
               setModalDetailMovie(false);
             }}
             movie={selectedMovie}
+            setMovie={res => {
+              setSelectedMovie(res);
+            }}
           />
           <BannerTop />
           <FlatListMovie

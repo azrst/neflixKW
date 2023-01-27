@@ -34,13 +34,13 @@ export default function headerDashboard() {
     <View
       style={[
         style.container,
-        {
-          opacity: interpolate({
-            inputRange: [yCoordinate, 700],
-            outputRange: [0, 0.95],
-            yCoordinate,
-          }),
-        },
+        // {
+        //   opacity: interpolate({
+        //     inputRange: [yCoordinate, 700],
+        //     outputRange: [0, 0.95],
+        //     yCoordinate,
+        //   }),
+        // },
       ]}>
       <Fragment>
         <View style={style.flexContainer}>
@@ -87,6 +87,7 @@ const style = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     backgroundColor: '#2e2e2e',
+    opacity: 0.5,
   },
   filterContainer: {
     flexDirection: 'row',

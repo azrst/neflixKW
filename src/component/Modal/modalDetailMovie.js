@@ -21,10 +21,33 @@ import Fragment from '../Fragment/Fragment';
 import TextTitle from '../Text/TextTitle';
 import apiManager from '../../manager/api/apiManager';
 import {endpoint} from '../../utils/endpoint';
+import FlatlistMovie from '../FlatlistMovie/flatlistMovie';
 
-const ModalDetailMovie = ({open = false, close = () => {}, movie = {}}) => {
+const ModalDetailMovie = ({
+  open = false,
+  close = () => {},
+  movie = {},
+  setMovie = () => {},
+}) => {
   const [opacityImage, setOpacityImage] = useState(0.8);
   const [movieDetail, setMovieDetail] = useState(null);
+  const [movieSimilar, setMovieSimilar] = useState({
+    loading: true,
+    data: null,
+  });
+
+  const recommendMovieSelect = item => {
+    snapToTop();
+    setMovie(item);
+    console.log(item);
+  };
+  useEffect(() => {
+    // setMovie(movie);
+  }, []);
+
+  const snapToTop = () => {
+    this.scroll.scrollTo({x: 0, y: 0, animated: true});
+  };
 
   const fetchMovieDetail = async () => {
     const res = await apiManager(
@@ -37,9 +60,55 @@ const ModalDetailMovie = ({open = false, close = () => {}, movie = {}}) => {
     }
     console.log('movie detail : ', res.status);
   };
-
   useEffect(() => {
     fetchMovieDetail();
+  }, [movie]);
+
+  const fetchMovieRecomendation = async () => {
+    let fetch = movieSimilar;
+    fetch = {
+      loading: true,
+      data: null,
+    };
+    setMovieSimilar(fetch);
+
+    let body = {
+      page: 1,
+    };
+    const res = await apiManager(
+      endpoint.movieDetail + movie?.id + '/recommendations',
+      body,
+      'GET',
+    );
+
+    if (res.status === 200) {
+      console.log('api recomen movie : ', res.data.results.length);
+
+      if (res.data.results.length > 0) {
+        fetch = {
+          loading: false,
+          data: res.data.results,
+        };
+        setMovieSimilar(fetch);
+        console.log('api recomen movie : ', res.data.results.length);
+      } else {
+        fetch = {
+          loading: null,
+          data: null,
+        };
+        setMovieSimilar(fetch);
+      }
+    } else {
+      fetch = {
+        loading: null,
+        data: null,
+      };
+      setMovieSimilar(fetch);
+    }
+  };
+  useEffect(() => {
+    console.log('movie id : ', movie?.id);
+    fetchMovieRecomendation();
   }, [movie]);
 
   return (
@@ -62,6 +131,7 @@ const ModalDetailMovie = ({open = false, close = () => {}, movie = {}}) => {
         showsVerticalScrollIndicator={false}
         onScroll={async event => {
           const y = event.nativeEvent.contentOffset.y;
+          console.log(y);
           if (y <= -80) {
             close();
           }
@@ -186,7 +256,7 @@ const ModalDetailMovie = ({open = false, close = () => {}, movie = {}}) => {
                 title={movie?.overview.replace(/"/g, '')}
               />
             </View>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => {
                 this.scroll.scrollTo({x: 0, y: 0, animated: true});
               }}>
@@ -195,8 +265,21 @@ const ModalDetailMovie = ({open = false, close = () => {}, movie = {}}) => {
                   title={JSON.stringify(JSON.stringify(movieDetail))}
                 />
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </Fragment>
+          {movieSimilar?.loading !== null && (
+            <View style={{paddingBottom: 50}}>
+              <FlatlistMovie
+                movie={movieSimilar}
+                title={'Recommendation'}
+                selectedMovie={item => {
+                  // controlSelectedMovie(item);
+                  console.log(item);
+                  recommendMovieSelect(item);
+                }}
+              />
+            </View>
+          )}
         </View>
         {/* </TouchableOpacity> */}
       </ScrollView>

@@ -4,17 +4,13 @@ const Context = createContext();
 
 export function UIProvider({children}) {
   const [yCoordinate, setYCoordinate] = useState(0);
-  const [modalSignIn, setModalSignIn] = useState(false);
-  const [modalSignUp, setModalSignUp] = useState(false);
+  const [translucent, setTranslucent] = useState(true);
 
   const UIValues = {
-    modalSignIn,
-    setModalSignIn,
-    modalSignUp,
-    setModalSignUp,
-
     yCoordinate,
     setYCoordinate,
+    translucent,
+    setTranslucent,
   };
 
   return <Context.Provider value={UIValues}>{children}</Context.Provider>;
